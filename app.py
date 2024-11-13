@@ -63,11 +63,9 @@ def show_result(result_id):
     results = results_cache.get(result_id)
 
     # Retrieve the result from cache
-    name = results.get('Profile Name')
-    desc = results.get('Profile Description')
-    pic = results.get('Profile Picture')
-    if not pic or pic == 'Not found':
-        pic = "../static/images/profile.png"
+    name = 'Not found'
+    desc = 'Not found'
+    pic = "../static/images/profile.png"
 
 
     # Render the result page with the processed data

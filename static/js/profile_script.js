@@ -1,6 +1,6 @@
 const toogleThemeButton = document.getElementById("toogle-theme-button");
 const searchButton = document.querySelector("#toogle-search-button");
-const loadingIndicators = document.querySelectorAll('.loading-area');
+const loadingIndicators = document.querySelectorAll(".loading-area");
 const blurOverlay = document.getElementById("blur-overlay");
 const popupModal = document.getElementById("popup-modal");
 let userInput = localStorage.getItem('userInput');
