@@ -86,7 +86,7 @@ def process_1():
 @app.route('/profile/<result_id>')
 def show_result(result_id):
     results = results_cache.get(result_id)
-    
+
     # Render the result page with the processed data
     return render_template('profile.html', profile_name=results['profileName'])
 

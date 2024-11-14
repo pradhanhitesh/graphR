@@ -60,7 +60,7 @@ Navigate to [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser to ac
 |   └── css/
 |   └── js/
 ├── 📂 templates/
-│   ├── home.html
+│   └── home.html
 │   └── profile.html
 ├── 📂 functions/
 │   └── graphR.py
@@ -89,9 +89,13 @@ Navigate to [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser to ac
  
 - **Limited PubMed Support**: Current implementation only supports basic scraping of PubMed profiles
 
-- **Error generating Names, Description and Profile Image**: PubMed do not stores user details, therefore, trying altenative ways to fetch details.
+- **Error generating Profile Image**: PubMed do not stores user profile image, therefore, trying altenative ways.
 
-- **Longer Profile Generation Time**: Currently, each profile takes uto 60 secs to be generated. 
+## 🐛 Fixed Issues
+ 
+- **[FIXED] Error generating Profile Name**: Used meta-content tag to find the profile name
+
+- **[FIXED] Longer Profile Generation Time**: Used concurency module to simultaneously scrap multiple pages
 
 ## 📣 Feedback
 
