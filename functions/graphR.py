@@ -8,6 +8,7 @@ import os
 import math
 from bs4 import BeautifulSoup
 import requests
+from urllib.parse import urlparse, parse_qs
 
 def initialize_browser():
     """Initialize the browser with specific headers."""
@@ -48,15 +49,18 @@ def validateLink(profile_link: str) -> dict:
             'status' : False,
             'message' : f"INVALID URL ENTERED"
         }
-    
+
 def parseUserInput(profile_link: str, abstract_view=True) -> str:
-    targetPageSize = 20
-    targetProfileName = [x for x in profile_link.split("&") if 'term=' in x][0]
-    targetAuthorID = [x for x in profile_link.split("&") if 'cauthor_id=' in x][0]
+    targetPageSize = 20 # DO NOT EDIT
+    # Parse the URL
+    parsed_url = urlparse(profile_link)
+    query_params = parse_qs(parsed_url.query)
+    targetProfileName = query_params.get('term', [None])[0].replace(" ","+")
+    targetAuthorID = query_params.get('cauthor_id', [None])[0]
     if abstract_view:
-        return f"https://pubmed.ncbi.nlm.nih.gov/?size={targetPageSize}" + f"&{targetProfileName}&" + targetAuthorID + "&format=abstract"
+        return f"https://pubmed.ncbi.nlm.nih.gov/?size={targetPageSize}" + f"&term={targetProfileName}&" + f"cauthor_id={targetAuthorID}" + "&format=abstract"
     else:
-        return f"https://pubmed.ncbi.nlm.nih.gov/?size={targetPageSize}" + f"&{targetProfileName}&" + targetAuthorID
+        return f"https://pubmed.ncbi.nlm.nih.gov/?size={targetPageSize}" + f"&term={targetProfileName}&" + f"cauthor_id={targetAuthorID}"
 
 def FetchAndParse(url):
     response = requests.get(url)
