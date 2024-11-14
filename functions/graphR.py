@@ -186,16 +186,15 @@ def setupScrapping(profile_link: str) -> dict:
             dataPageLinks += [user_input + f"&page={k+1}"]
 
         return {
-            'ProfileName' : dataProfileName,
-            'PageLinks' : dataPageLinks
+            'profileName' : dataProfileName,
+            'pageLinks' : dataPageLinks
         }
     else:
         # Extract pages to scrap
         dataPageLinks = []
         for k in range(dataPagesToScrap):
             dataPageLinks += [user_input + f"&page={k+1}"]
-
         return {
-            'ProfileName' : dataProfileName,
-            'PageLinks' : dataPageLinks
+            'profileName' : dataProfileName,
+            'pageLinks' : dataPageLinks
         }
