@@ -15,6 +15,12 @@ Welcome to **GraphR**! This tool scrapes and summarizes academic profiles from *
 
 - 🖥️ **Interactive UI**: Simple and responsive frontend for inputting and viewing profiles.
 
+## 🎥 How to find PubMed profile link of any researcher?
+
+<video width="640" height="360" controls>
+    <source src="static/images/How_To_Find_PubMed_ProfileLink.mp4" type="video/mp4">
+</video>
+
 ## 📦 Installation
 
 Get started by cloning the repository and setting up the environment:
