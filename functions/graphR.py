@@ -179,12 +179,23 @@ def setupScrapping(profile_link: str) -> dict:
     dataTotalResults = int(soup.find('meta', {'name' : 'log_resultcount'})['content'])
     dataPagesToScrap = math.ceil((dataTotalResults/20))
 
-    # Extract pages to scrap
-    dataPageLinks = []
-    for k in range(dataPagesToScrap):
-        dataPageLinks += [user_input + f"&page={k+1}"]
+    if dataPagesToScrap > 6:
+        # Extract pages to scrap
+        dataPageLinks = []
+        for k in range(5):
+            dataPageLinks += [user_input + f"&page={k+1}"]
 
-    return {
-        'profileName' : dataProfileName,
-        'pageLinks' : dataPageLinks
-    }
+        return {
+            'ProfileName' : dataProfileName,
+            'PageLinks' : dataPageLinks
+        }
+    else:
+        # Extract pages to scrap
+        dataPageLinks = []
+        for k in range(dataPagesToScrap):
+            dataPageLinks += [user_input + f"&page={k+1}"]
+
+        return {
+            'ProfileName' : dataProfileName,
+            'PageLinks' : dataPageLinks
+        }
