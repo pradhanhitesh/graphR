@@ -95,7 +95,8 @@ Navigate to [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser to ac
 
 - **Error generating Profile Image**: PubMed do not stores user profile image, therefore, trying altenative ways.
 
-## 🐛 Fixed Issues
+- **Large scope of search**: PubMed do not necessarily differeniates researchers, therefore, the search name is indexed across all articles in PubMed.
+## 🔨 Fixed Issues
  
 - **[FIXED] Error generating Profile Name**: Used meta-content tag to find the profile name
 
