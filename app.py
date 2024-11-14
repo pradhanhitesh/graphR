@@ -19,9 +19,10 @@ def home():
 def process_link():
     # Get data
     data = request.get_json()
-    user_input = graphR.parseUserInput(profile_link=data.get('profile_link'), abstract_view=False)
-
+    user_input = data.get('profile_link')
+    
     if graphR.validateLink(profile_link=user_input)['status']:
+        user_input = graphR.parseUserInput(profile_link=data.get('profile_link'), abstract_view=False)
         data = graphR.setupScrapping(profile_link=user_input)
         profileName = data['profileName']
 
@@ -40,7 +41,6 @@ def process_link():
         return jsonify(
             {
             'success' : False,
-            'result_id': result_id,
             'message': graphR.validateLink(profile_link=user_input)['message']
         }
         )
