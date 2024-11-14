@@ -65,7 +65,7 @@ typingForm.addEventListener('submit', async (e) => {
                 popupModal.style.display = "none";
                 validMsg.style.display = "block";
                 invalidMsg.style.display = "none";
-            }, 2000);
+            }, 1500);
 
             
         }
@@ -79,5 +79,32 @@ typingForm.addEventListener('submit', async (e) => {
 window.onpageshow = (event) => {
     if (event.persisted) {
         window.location.reload();
+    }
+};
+
+window.onload = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const errorType = urlParams.get('error');
+    const errorPopup = document.getElementById('errorPopup');
+    const popupMessage = document.getElementById('popupMessage');
+
+    // Define generic error messages
+    const errorMessages = {
+        'InternalNetworkError': 'Network error occurred. Please try again later.',
+        'InternalServerError': 'Server error occurred. Please try again later.'
+    };
+
+    // Display the error popup if an error type is found in the URL
+    if (errorType && errorMessages[errorType]) {
+        popupMessage.textContent = errorMessages[errorType];
+        errorPopup.style.display = 'flex';
+
+        // Set a timeout to automatically hide the popup after 2 seconds
+        setTimeout(() => {
+            errorPopup.style.display = 'none';
+        }, 2000);
+
+        // Optionally, clear the error parameter from the URL
+        history.replaceState(null, '', window.location.pathname);
     }
 };

@@ -5,7 +5,10 @@ from mechanize import Browser
 from openai import OpenAI
 import json
 import os
-        
+import math
+from bs4 import BeautifulSoup
+import requests
+
 def initialize_browser():
     """Initialize the browser with specific headers."""
     b = Browser()
@@ -16,183 +19,94 @@ def initialize_browser():
     ]
     return b
 
-def get_profile(profile_link: str) -> dict:
-    """Fetch and return the profile details from the given Google Scholar profile link."""
-    browser = initialize_browser()
-    profile_data = {"Profile Name": "Not found", "Profile Description": "Not found", "Profile Picture": "Not found"}
+def validateLink(profile_link: str) -> dict:
+    if all(substring in profile_link for substring in ['cauthor_id=', 'term=', 'https://pubmed.ncbi.nlm.nih.gov']):
+        try:
+            # Send a GET request to the URL
+            response = requests.get(profile_link)
+
+            # Check if the response status code is 200 (OK)
+            if response.status_code == 200:
+                return {
+                    'status' : True,
+                    'message' : f'VALID URL. STATUS CODE [{response.status_code}]'
+                }
+            else:
+                return {
+                    'status' : False,
+                    'message' : f'INVALID URL. STATUS CODE [{response.status_code}]'
+                }
+            
+        except requests.exceptions.RequestException as e:
+            return {
+                'status' : False,
+                'message' : f"UKNOWN ERROR OCCURED {e}"
+            }
+        
+    else:
+        return {
+            'status' : False,
+            'message' : f"INVALID URL ENTERED"
+        }
     
-    try:
-        browser.open(profile_link,  timeout=60)
-        soup = BeautifulSoup(browser.response().read(), "html.parser")
+def parseUserInput(profile_link: str, abstract_view=True) -> str:
+    targetPageSize = 20
+    targetProfileName = [x for x in profile_link.split("&") if 'term=' in x][0]
+    targetAuthorID = [x for x in profile_link.split("&") if 'cauthor_id=' in x][0]
+    if abstract_view:
+        return f"https://pubmed.ncbi.nlm.nih.gov/?size={targetPageSize}" + f"&{targetProfileName}&" + targetAuthorID + "&format=abstract"
+    else:
+        return f"https://pubmed.ncbi.nlm.nih.gov/?size={targetPageSize}" + f"&{targetProfileName}&" + targetAuthorID
 
-        # Extract Profile Name
-        profile_name_elem = soup.find("div", {"id": "gsc_prf_in"})
-        if profile_name_elem:
-            profile_data["Profile Name"] = profile_name_elem.text.strip()
+def FetchAndParse(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, "html.parser")
+    return soup
 
-        # Extract Profile Description
-        profile_desc_elem = soup.find("div", {"class": "gsc_prf_il"})
-        if profile_desc_elem:
-            profile_data["Profile Description"] = profile_desc_elem.text.strip()
+def pubmed_crawl(page_soup):
+    papers = page_soup.find_all('article', {"class" : "article-overview"})
+    results = {}
+    for paper in papers:
+        # Get paper name
+        paper_name = paper.find('h1',{'class':'heading-title'}).find('a').get_text(strip=True)
 
-        # Extract Profile Picture URL
-        profile_pic_elem = soup.find("img", {"id": "gsc_prf_pup-img"})
-        if profile_pic_elem and 'src' in profile_pic_elem.attrs:
-            profile_pic_url = profile_pic_elem['src'].replace("view_photo","medium_photo")
-            if '/citations/images/avatar_scholar_128.png' not in profile_pic_url:
-                profile_data["Profile Picture"] = profile_pic_url
-
-    except Exception as e:
-        print(f"Error fetching profile data: {e}")
-
-    finally:
-        browser.close()
-
-    return profile_data
-
-
-def scrap_pubmed(browser: Browser, paper: str) -> dict:
-    query = paper.replace(" ", "+")
-    url = f"https://pubmed.ncbi.nlm.nih.gov/?term={query}&size=200"
-    abstract_content = {}
-
-    try:
-        # Open the URL with Mechanize
-        response = browser.open(url, timeout=60)
-        
-        # Check if the response is successful
-        if response.code != 200:
-            print(f"Failed to fetch PubMed page for: {paper}")
-            return abstract_content
-
-        soup = BeautifulSoup(response.read(), "html.parser")
-
-        # Look for abstract sections using more reliable classes or attributes
-        abstract_sections = soup.find_all('div', {'class': 'abstract-content'})
-        
-        if not abstract_sections:
-            print(f"No Abstract Found: {paper}")
-            return abstract_content
-
-        # Iterate over sections to check structured or unstructured abstract
-        for section in abstract_sections:
-            paragraphs = section.find_all('p')
-
-            if not paragraphs:
-                print(f"No paragraphs found in abstract for {paper}")
+        # Get authors name
+        authors_list = []
+        for authors in paper.find_all('span', {'class' : 'authors-list-item'}):
+            try:
+                author_name = authors.find('a', {'class' : 'full-name'}).get_text(strip=True)
+                authors_list += [author_name]
+            except Exception as e:
                 continue
 
-            if len(paragraphs) == 1:
-                # Unstructured abstract
-                print(f"Single-paragraph Abstract Found: {paper}")
-                abstract_content["Abstract"] = paragraphs[0].get_text(strip=True)
+        abstract_content = {}
+        try:        
+            abstract_area = paper.find_all('div',{'class':'abstract'})[0].find('div',{"class":"abstract-content selected"})
+            abstract_structure = abstract_area.find_all('p')
+
+            if len(abstract_structure) == 0: # Abstract not found
+                pass
+            elif len(abstract_structure) == 1: # Unstructured Abstract
+                abstract_content["Abstract"] = abstract_area.get_text(strip=True)
             else:
-                # Structured abstract
-                print(f"Structured Abstract Found: {paper}")
-                for p in paragraphs:
-                    subtitle_tag = p.find('strong', class_='sub-title')
+                for sections in abstract_structure:
+                    subtitle_tag = sections.find('strong', class_='sub-title')
                     subtitle = subtitle_tag.get_text(strip=True).rstrip(':') if subtitle_tag else "Abstract"
-                    content = p.get_text(strip=True).replace(f"{subtitle}:", "").strip()
+                    content = sections.get_text(strip=True).replace(f"{subtitle}:", "").strip()
                     abstract_content[subtitle] = content
 
-        # Author Names
-        try:
-            authors = sorted(list(set([x.get_text(strip=True) for x in soup.find_all('a', {'class' : 'full-name'})])))
+
+            results[paper_name] = {
+            "Authors" : list(set(authors_list)),
+            "Abstract" : abstract_content
+        }
         except Exception as e:
-            authors = []
-            
+            pass
 
-    except Exception as e:
-        print(f"An error occurred while scraping PubMed for {paper}: {str(e)}")
-
-    return abstract_content, authors
-
-def get_description(browser, link):
-    """Retrieve the description text from the given link."""
-    try:
-        browser.open(link, timeout=60)
-        soup = BeautifulSoup(browser.response().read(), "html.parser")
-        text_elements = soup.find_all("div", {"class": "gsh_csp"})
-        texts = [element.text for element in text_elements]
-        return "\n".join(texts) if texts else "No description available"
-    except Exception as e:
-        print(f"Error fetching description: {e}")
-        return "Error fetching description"
     
-def scrap_gsc(browser, profile_link: str) -> dict:
-    # Ensure the correct sorting of links
-    by_cited = profile_link.replace('&sortby=pubdate', '')
-    by_year = profile_link if '&sortby=pubdate' in profile_link else f'{profile_link}&sortby=pubdate'
-
-    # Store the links in the list
-    links_to_scrap = [by_cited, by_year]
-    results = {}
-
-    for link in links_to_scrap:
-        browser.open(link, timeout=60)
-        soup = BeautifulSoup(browser.response().read(), "html.parser")
-
-        # Find paper entries and citations
-        papers = soup.find_all("td", {"class": "gsc_a_t"})
-        citations = soup.find_all("td", {"class": "gsc_a_c"})
-
-        # Process papers and citations only if counts match
-        if len(papers) == len(citations):
-            for paper, cite in zip(papers, citations):
-                try:
-                    # Extract paper name
-                    paper_name = paper.find('a', class_='gsc_a_at')
-                    if not paper_name:
-                        print("Paper name not found, skipping entry.")
-                        continue
-                    
-                    paper_name_text = paper_name.text.strip()
-                    href = "https://scholar.google.co.in" + paper_name['href']
-
-                    # Extract journal info safely
-                    journal_info_elements = paper.find_all('div', class_='gs_gray')
-                    if len(journal_info_elements) < 2:
-                        print(f"Journal info not found for {paper_name_text}. Using default 'N/A'.")
-                        journal_info = "N/A"
-                    else:
-                        journal_info = journal_info_elements[1].text.strip()
-
-                    # Extract year safely
-                    year_span = paper.find('span', class_='gs_oph')
-                    year = year_span.text.strip(',').replace(" ", "") if year_span else "N/A"
-
-                    # Extract citation number safely
-                    citation_link = cite.find('a', class_='gsc_a_ac')
-                    citation_number = citation_link.text.strip() if citation_link and citation_link.text else "0"
-
-                    # Get description using the helper function
-                    descp = get_description(browser, href)
-
-                    # Search on PubMed
-                    pubmed_abstract, pubmed_authors  = scrap_pubmed(browser, paper_name_text)
-
-                    # Add entry if it doesn't already exist
-                    if paper_name_text not in results:
-                        results[paper_name_text] = {
-                            'Journal Name': journal_info,
-                            'Year': year,
-                            'Link': href,
-                            'Citation': citation_number,
-                            'Description': descp,
-                            'PubMed Abstract' : pubmed_abstract,
-                            'PubMed Authors' : pubmed_authors
-
-                        }
-
-                except Exception as e:
-                    print(f"Error processing entry for {paper_name.text if paper_name else 'unknown'}: {e}")
-                    continue
-
-    browser.close()  # Close the browser once all links are scraped
     return results
 
-
-def summarize_profile(pubmed: dict) -> dict:
+def summarize_profile(pubmed: dict, profileName: str) -> dict:
     api_key = os.environ.get('API_KEY')
     client = OpenAI(api_key=api_key)
 
@@ -200,7 +114,7 @@ def summarize_profile(pubmed: dict) -> dict:
     prompt = {
     "role": "user",
     "content": (
-        "You are a Scientific Profiler tasked with analyzing a researcher's work. "
+        f"You are a Scientific Profiler tasked with analyzing the work of {profileName} work. "
         "Go through **all available research papers**, abstracts, and other related publications from the researcher. "
         "Provide a detailed summary of the following aspects:\n\n"
         "1. **Background**: Give a brief overview of the researcher's professional background, expertise, and affiliations.\n"
@@ -243,58 +157,30 @@ def summarize_profile(pubmed: dict) -> dict:
         # Parse the response content back to a Python dictionary
         response_json = json.loads(response_content)
 
-    response_json["success"] = True
-
     return response_json
 
+def setupScrapping(profile_link: str) -> dict:
+    # Initialize browser
+    browser = initialize_browser()
 
-def pubmed_crawl(browser, profile_link: str) -> dict:
-    browser.open(profile_link + "&format=abstract", timeout=60)
+    # Update the user-input
+    user_input = parseUserInput(profile_link, abstract_view=True)
+
+    # Open browser and get results
+    browser.open(user_input)
     soup = BeautifulSoup(browser.response().read(), "html.parser")
 
-    papers = soup.find_all('article', {"class" : "article-overview"})
-    results = {}
-    for paper in papers:
-        # Get paper name
-        paper_name = paper.find('h1',{'class':'heading-title'}).find('a').get_text(strip=True)
-        print(paper_name)
+    # Extract basic details
+    dataProfileName = soup.find('meta', {'name' : 'log_query'})['content']
+    dataTotalResults = int(soup.find('meta', {'name' : 'log_resultcount'})['content'])
+    dataPagesToScrap = math.ceil((dataTotalResults/20))
 
-        # Get authors name
-        authors_list = []
-        for authors in paper.find_all('span', {'class' : 'authors-list-item'}):
-            try:
-                author_name = authors.find('a', {'class' : 'full-name'}).get_text(strip=True)
-                # author_afl = authors.find('a', {'class': 'affiliation-link'})['title']
-                authors_list += [author_name]
-            except Exception as e:
-                continue
+    # Extract pages to scrap
+    dataPageLinks = []
+    for k in range(dataPagesToScrap):
+        dataPageLinks += [user_input + f"&page={k+1}"]
 
-        abstract_content = {}
-        try:        
-            abstract_area = paper.find_all('div',{'class':'abstract'})[0].find('div',{"class":"abstract-content selected"})
-            abstract_structure = abstract_area.find_all('p')
-
-            if len(abstract_structure) == 0: # Abstract not found
-                pass
-            elif len(abstract_structure) == 1: # Unstructured Abstract
-                abstract_content["Abstract"] = abstract_area.get_text(strip=True)
-            else:
-                for sections in abstract_structure:
-                    subtitle_tag = sections.find('strong', class_='sub-title')
-                    subtitle = subtitle_tag.get_text(strip=True).rstrip(':') if subtitle_tag else "Abstract"
-                    content = sections.get_text(strip=True).replace(f"{subtitle}:", "").strip()
-                    abstract_content[subtitle] = content
-
-
-            results[paper_name] = {
-            "Authors" : authors_list,
-            "Abstract" : abstract_content
-        }
-        except Exception as e:
-            results[paper_name] = {
-                "Authors" : "NA",
-                "Abstract" : "NA"
-            }
-
-    
-    return results
+    return {
+        'profileName' : dataProfileName,
+        'pageLinks' : dataPageLinks
+    }

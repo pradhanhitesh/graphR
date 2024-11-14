@@ -3,6 +3,8 @@ const searchButton = document.querySelector("#toogle-search-button");
 const loadingIndicators = document.querySelectorAll(".loading-area");
 const blurOverlay = document.getElementById("blur-overlay");
 const popupModal = document.getElementById("popup-modal");
+const textElement = document.getElementById("cycle-text");
+let currentIndex = 0;
 let userInput = localStorage.getItem('userInput');
 let profileID = localStorage.getItem('profileID');
 
@@ -25,6 +27,26 @@ const loadLocalStorageDate = () => {
 // // Load saved chats when the script runs
 loadLocalStorageDate();
 
+// Array of texts to cycle through
+const texts = [
+    "Searching articles on PubMed",
+    "Extracting abstracts",
+    "Thank you for your patience",
+    "Building profile may take upto 60 seconds",
+    "Do not close window or refresh the page"
+];
+
+// Function to cycle through texts
+function cycleTexts() {
+    // Update the text content
+    textElement.textContent = texts[currentIndex];
+    // Move to the next text in the array
+    currentIndex = (currentIndex + 1) % texts.length;
+}
+
+// Start cycling every 1.5 seconds
+setInterval(cycleTexts, 1500);
+
 // Add click event listener to the search button
 searchButton.addEventListener('click', () => {
     window.location.href = '/';
@@ -32,46 +54,46 @@ searchButton.addEventListener('click', () => {
 
 // Function to send the link to the backend or get from local storage
 async function sendProfileLink(userInput) {
-    // Check if the data is already in localStorage
     const storedData = localStorage.getItem(profileID);
     
     if (storedData) {
-        // If data exists in localStorage, parse and use it
         blurOverlay.style.display = "none";
         popupModal.style.display = "none";
         const data = JSON.parse(storedData);
-        handleResponseData(data, true); // Process the data without typing effect
+        handleResponseData(data, true);
     } else {
-        // If no data in localStorage, send the request to the backend
         try {
-            // Send POST request to the Flask backend
             const response = await fetch('/process_1', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ profile_link: userInput })
             });
 
-            // Check if the response is okay
+            // Redirect with a generic error if the response is not okay
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                console.error(`HTTP error! Status: ${response.status}`);
+                window.location.href = '/?error=InternalNetworkError';
+                return;
             }
 
-            // Parse the JSON response
             const data = await response.json();
 
-            // Check if the request was successful
+            // Assuming the backend does not return a `message`, just check for success
             if (data.success) {
-                // Store the response data in localStorage for future use
-                localStorage.setItem(profileID, JSON.stringify(data)); // Save data in localStorage
+                localStorage.setItem(profileID, JSON.stringify(data));
                 blurOverlay.style.display = "none";
                 popupModal.style.display = "none";
-                handleResponseData(data, false); // Process the response with typing effect
+                handleResponseData(data, false);
             } else {
-                console.error('Request failed:', data.message);
+                console.error('Request failed');
+                window.location.href = '/?error=InternalServerError';
+                console.log(data.message);
             }
         } catch (error) {
             console.error('Error sending profile link:', error);
-        } 
+            window.location.href = '/?error=InternalServerError';
+            console.log(data.message);
+        }
     }
 }
 
@@ -133,26 +155,3 @@ function typeEffect(element, text, speed, callback) {
 
 // Assuming `userInput` is defined and ready to be passed to the function
 sendProfileLink(userInput);
-
-// Array of texts to cycle through
-const texts = [
-    "Searching articles on PubMed",
-    "Extracting abstracts",
-    "Thank you for your patience",
-    "Building profile may take upto 60 seconds",
-    "Do not close window or refresh the page"
-];
-
-let currentIndex = 0;
-const textElement = document.getElementById("cycle-text");
-
-// Function to cycle through texts
-function cycleTexts() {
-    // Update the text content
-    textElement.textContent = texts[currentIndex];
-    // Move to the next text in the array
-    currentIndex = (currentIndex + 1) % texts.length;
-}
-
-// Start cycling every 1.5 seconds
-setInterval(cycleTexts, 1500);
