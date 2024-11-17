@@ -23,6 +23,10 @@ Please watch the YouTube video <a href="https://www.youtube.com/watch?v=waPMcZsQ
 
 Get started by cloning the repository and setting up the environment:
 
+1. Ensure you have **Python 3.10** installed.
+   - You can check your Python version with: `python3 --version`
+
+2. Then do this:
 ```bash
 git clone https://github.com/pradhanhitesh/graphR.git
 cd graphR
@@ -36,13 +40,13 @@ pip install -r requirements.txt
 This project uses OpenAI's API for text summarization. Add your API key to your environment:
 
 ```bash
-export api_key='your-api-key-here'
+export API_KEY='your-api-key-here'
 ```
 
 Alternatively, you can set it in a `.env` file:
 
 ```
-api_key=your-openai-api-key-here
+API_KEY=your-openai-api-key-here
 ```
 
 ## 🚀 Running the App
