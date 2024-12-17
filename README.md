@@ -13,7 +13,8 @@ Welcome to **GraphR**! This tool scrapes and summarizes academic profiles from *
 
 - 📝 **Smart Summarization**: Uses OpenAI API to generate a concise overview of the profile.
 
-- 🖥️ **Interactive UI**: Simple and responsive frontend for inputting and viewing profiles.
+- 🖥️ **Interactive Graph**: Simple and responsive visualization of papers associated with the author using graph networks, including community detection.
+
 
 ## 🎥 How to find PubMed profile link of any researcher?
 
@@ -62,7 +63,7 @@ Navigate to [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser to ac
 ## 🛠️ Project Structure
 
 ```
-📁 scholar-profile-scraper/
+📁 graphR/
 ├── 📂 static/
 │   └── images/
 |   └── css/
@@ -70,6 +71,7 @@ Navigate to [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser to ac
 ├── 📂 templates/
 │   └── home.html
 │   └── profile.html
+│   └── graph.html
 ├── 📂 functions/
 │   └── graphR.py
 |   └── __init__.py
@@ -101,13 +103,13 @@ Navigate to [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser to ac
 
 - **Large scope of search**: PubMed do not necessarily differeniates researchers, therefore, the search name is indexed across all articles in PubMed.
 
-- **Large Serveless Function**: Vecel/AWS do not allow bundles larger than 250MB to run. Adding the "graph" functionality has added to the size and therefore not allowing the project to be deployed.
-
 ## 🔨 Fixed Issues
  
 - **[FIXED] Error generating Profile Name**: Used meta-content tag to find the profile name
 
 - **[FIXED] Longer Profile Generation Time**: Used concurency module to simultaneously scrap multiple pages
+
+- **[FIXED] Large Serveless Function**: Moved deployments from [Vercel](https://vercel.com/) to [Render](https://render.com/) to deploy large bundle size (>250MB) and also increased wait time from 60 secs to 120 seconds
 
 ## 📣 Feedback
 
@@ -123,7 +125,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 - [Flask](https://flask.palletsprojects.com/)
 - [OpenAI API](https://openai.com/)
 - [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/)
-- [Mechanize](https://mechanize.readthedocs.io/en/latest/)
 
 <p align="center">
   Made with ❤️ by [Hitesh] (https://github.com/pradhanhitesh)
