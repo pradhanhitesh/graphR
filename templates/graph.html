@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>GraphR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="/static/css/graph_style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+    <section class="container">
+        <div class="graph-container">
+            <div class="graph-wrapper">
+                <svg></svg>
+            </div>
+            <div class="overlay-box mySwiper">
+                <div class="comm-wrapper swiper-wrapper">
+                    <div class="slide swiper-slide">
+                        <span class="comm-name" id="comm-1-name">Neuroimaging and AD</span>
+                        <span class="comm-desc">
+                            <p id="comm-1-desc">
+                                This is the description. This is the description.
+                                This is the description. This is the description.
+                                This is the description. This is the description.
+                                This is the description. This is the description.
+                            </p>
+                        </span>
+                    </div>
+
+                    <div class="slide swiper-slide">
+                        <span class="comm-name" id="comm-2-name">Biomarkers and AD</span>
+                        <span class="comm-desc">
+                            <p id="comm-2-desc">
+                                This is the description. This is the description.
+                                This is the description. This is the description.
+                                This is the description. This is the description.
+                                This is the description. This is the description.
+                            </p>
+                        </span>
+                    </div>
+
+                    <div class="slide swiper-slide">
+                        <span class="comm-name" id="comm-3-name">CSF and AD</span>
+                        <span class="comm-desc">
+                            <p id="comm-3-desc">
+                                This is the description. This is the description.
+                                This is the description. This is the description.
+                                This is the description. This is the description.
+                                This is the description. This is the description.
+                            </p>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="swiper-button-next nav-button"></div>
+            <div class="swiper-button-prev nav-button"></div>
+            <!-- <div class="swiper-pagination"></div> -->
+        </div>
+
+
+        <div class="graph-papers">
+            <span class="paper-title" id="paper-title">
+                <h2>Click on the nodes to load paper information</h2>
+            </span>
+            <span class="paper-authors" id="paper-authors">For some nodes, information may not be available.</span>
+            <span class="paper-sections" id="paper-sections"></span>
+        </div>
+    </section>
+
+    <div class="nav-buttons">
+        <div class="action-buttons-theme">
+            <span id="toogle-theme-button" class="icon material-symbols-rounded" title="Switch Theme">light_mode</span>
+        </div>
+        <div class="action-buttons-search">
+            <span id="toogle-search-button" class="icon material-symbols-rounded" title="Search Again">search</span>
+        </div>
+    </div>
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <!-- Initialize Swiper -->
+    <script src="/static/js/graph_script.js"></script>
+</body>
+
+</html>

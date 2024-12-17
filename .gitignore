@@ -1,0 +1,7 @@
+venv
+.vscode
+.venv
+.env
+__pycache__
+functions\__pycache__
+main.ipynb

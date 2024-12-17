@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-signin-client_id" content="311910221405-fer4pcfgsge9r2bhj3fs3krlfcme51q6.apps.googleusercontent.com">
+    <title>GraphR</title>
+    <link rel="icon" type="image/x-icon" href="static/images/favicon.jpeg">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="/static/css/home_style.css">
+</head>
+
+<body>
+    <header class="header">
+        <!-- Header Greetings -->
+        <h2 class="title" >Introducing GraphR</h2>
+        <h2 class="subtitle" id="typing-title">Comprehensive profile of researchers</h2>
+    </header>
+
+    <!-- Typing Area -->
+    <div class="typing-area" id="typing-area">
+        <form action="#" class="typing-form" id="typing-form">
+            <div class="input-wrapper">
+                <input type="text" placeholder="Enter PubMed Profile Link" id="typing-input"
+                    class="typing-input" autocomplete="off" required>
+                <button id="send-button" class="icon material-symbols-rounded" 
+                type="submit">send</button>
+            </div>
+            <div class="action-buttons">
+                <span id="toogle-theme-button" class="icon material-symbols-rounded"
+                    title="Switch theme">light_mode</span>
+                <span id="delete-chat-button" class="icon material-symbols-rounded"
+                    title="Erase chat history">delete_history</span>
+                <span id="stop-response-button" class="icon material-symbols-rounded"
+                    title="Stop generating response">stop_circle</span>
+            </div>
+        </form>
+    </div>
+
+    <!-- Blur Overlay -->
+    <div id="blur-overlay" class="blur-overlay"></div>
+
+    <!-- Popup Modal -->
+    <div id="popup-modal" class="popup-modal">
+        <div class="popup-content">
+            <div class="circle"></div>
+            <p id="valid-message" style="font-size: 20px; display: block;">Validating Profile link..</p>
+            <p id="invalid-message" style="font-size: 20px; display: none;">Invalid Profile Link..</p>
+        </div>
+    </div>
+
+    <!-- Error -->
+    <div id="errorPopup" class="popup-overlay" style="display: none;">
+        <div class="popup-contents">
+            <p id="popupMessage" class="popupMessage"></p>
+        </div>
+    </div>
+
+    <!-- <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <a href="#" onclick="signOut();">Sign out</a>
+    <script>
+    function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+        console.log('User signed out.');
+        });
+    }
+    </script> -->
+
+    <script src="/static/js/home_script.js"></script>
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+      </script>
+      <script defer src="/_vercel/insights/script.js"></script>
+      <script src="https://apis.google.com/js/platform.js" async defer></script>
+</body>
+
+</html>

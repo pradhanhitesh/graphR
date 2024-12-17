@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GraphR</title>
+    <link rel="icon" type="image/x-icon" href="static/images/favicon.png">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="/static/css/profile_style.css">
+</head>
+
+<body>
+    <!-- Information Area -->
+    <div class="info-area">
+        <div class="basic-info">
+            <img src="../static/images/profile.png" alt="" class="profile-img">
+            <div class="basic-content">
+                <p><strong>Name: </strong>{{ profile_name }}</p>
+            </div>
+            <div class="buttons-area">
+                <ul class="buttons-list">
+                    <li class="buttons">
+                        <a href="#" style="text-decoration: none; color: inherit;" id="graph-network">
+                            <h4 class="text"><strong>Want more details?</strong>Try visualizing as graph network</h4>
+                            <span id="graph-button" class="icon material-symbols-rounded">hub</span>
+                        </a>
+                    </li>
+
+                    <li class="buttons">
+                       <a href="#" style="text-decoration: none; color: inherit;" id="cold-email">
+                            <h4 class="text"><strong>Send them mail? </strong>Here is personalisd email template</h4>
+                            <span class="icon material-symbols-rounded">download</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>      
+        </div>
+
+        <div class="detail-info">
+            <h2>Background</h2>
+            <div class="loading-area">
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+            </div>
+
+            <h2>Research Interests</h2>
+            <div class="loading-area">
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+            </div>
+
+            <h2>Preferred Methodology</h2>
+            <div class="loading-area">
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+            </div>
+
+            <h2>Insights</h2>
+            <div class="loading-area">
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Light/Dark Mode Button -->
+    <div class="nav-buttons">
+        <div class="action-buttons-theme">
+            <span id="toogle-theme-button" class="icon material-symbols-rounded" title="Switch Theme">light_mode</span>
+        </div>
+        <div class="action-buttons-search">
+            <span id="toogle-search-button" class="icon material-symbols-rounded" title="Search Again">search</span>
+        </div>
+    </div>
+
+    <!-- Blur Overlay -->
+    <div id="blur-overlay" class="blur-overlay"></div>
+
+    <div id="popup-modal" class="popup-modal">
+        <div class="popup-content">
+            <div class="circle"></div>
+            <p id="cycle-text" style="font-size: 20px;">Profile Link validated..</p>
+        </div>
+    </div>
+
+
+    <script src="/static/js/profile_script.js"></script>
+</body>
+
+</html>
