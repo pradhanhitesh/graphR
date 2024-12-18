@@ -103,6 +103,8 @@ Navigate to [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser to ac
 
 - **Large scope of search**: PubMed do not necessarily differeniates researchers, therefore, the search name is indexed across all articles in PubMed.
 
+- **Slower website response**: Rendering website and functions on [Render](https://render.com/) is very slow compared to [Vercel(https://vercel.com/). 
+
 ## 🔨 Fixed Issues
  
 - **[FIXED] Error generating Profile Name**: Used meta-content tag to find the profile name
